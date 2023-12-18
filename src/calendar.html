@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+
+  <title>Hello World!</title>
+  <link rel="stylesheet" href="index.css" />
+  <script src="windowControls.js"></script>
+  <script src="firebaseInit.js"></script>
+
+</head>
+
+<body class="pt-32 h-screen flex items-center justify-center">
+  <header>
+    <div class="flex justify-between items-center bg-blue-800 text-black fixed inset-x-0 top-0 z-50" style="-webkit-app-region: drag">
+      <div class="flex items-center">
+        <span class="material-symbols-outlined p-2 hover:bg-gray-200 select-none">menu</span>
+      </div>
+      <div class="flex items-center">
+        <span class="material-symbols-outlined p-2 minimize-button hover:bg-gray-200 select-none" style="-webkit-app-region: no-drag">minimize</span>
+        <span class="material-symbols-outlined p-2 maximize-button hover:bg-gray-200 select-none" style="-webkit-app-region: no-drag">fullscreen</span>
+        <span class="material-symbols-outlined p-2 close-button hover:bg-gray-200 select-none" style="-webkit-app-region: no-drag">close</span>
+      </div>
+    </div>
+  </header>
+  <nav class="bg-blue-500 text-white p-4 flex justify-between items-center w-full fixed top-10 navbar">
+    <h1 class="text-lg" id="navbarTitle"></h1>
+    <div>
+      <button class="bg-blue-700 hover:bg-blue-800 text-white rounded px-2 py-1 mr-2">Settings</button>
+      <button class="bg-red-500 hover:bg-red-600 text-white rounded px-2 py-1">Log out</button>
+    </div>
+  </nav>
+  <section class="bg-gray-200 w-full  select-none">
+    <div id="workingHoursModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+    
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+              Set Working Hours
+            </h3>
+            <div class="mt-2">
+              <form id="workingHoursForm">
+                <div class="mb-4">
+                  <label for="startHour" class="block text-sm font-medium text-gray-700">Start Hour</label>
+                  <select id="startHour" name="startHour" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <!-- Options will be added here -->
+                  </select>
+                </div>
+                <div class="mb-4">
+                  <label for="endHour" class="block text-sm font-medium text-gray-700">End Hour</label>
+                  <select id="endHour" name="endHour" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <!-- Options will be added here -->
+                  </select>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button type="button" id="submitWorkingHours" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+        <div id="calendar" class="bg-white w-full overflow-auto rounded-lg shadow-lg p-4"></div>
+        <div id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+              <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+              </div>
+              <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+              <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <h3 class="text-lg leading-6 font-medium text-gray-900">Appointments</h3>
+                  <h4 id="appointmentDate" class="text-md leading-5 font-medium text-gray-600 mt-2">For: </h4>
+
+                  <ul id="appointmentList" class="mt-3 flex flex-wrap justify-between w-full">
+                    <!-- Appointment times will be added here -->
+                  </ul>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                  <button id="closeModal" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="appointmentFormModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+              <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+              <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+              <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <form id="appointmentForm">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required>
+                    
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    
+                        <label for="phone">Phone:</label>
+                        <input type="tel" id="phone" name="phone" required>
+                        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                          Add Appointment
+                        </button>
+                      </form>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                  
+                  <button id="appointmentFormCancel"type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="successModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div class="inline-block align-bottom bg-green-100 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                    Success
+                                </h3>
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-500">
+                                        Appointment added successfully!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+  </section>
+  <script src="addUsername.js"></script>
+  <script src="modal.js"></script>
+  <script src="workingHours.js"></script>
+  <script src="calendarGen.js"></script>
+  <script src="showAppointments.js"></script>
+</body>
+</html>
+
