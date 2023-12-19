@@ -17,12 +17,13 @@
   <script src="register.js"></script>
 </head>
 
-<body class="pt-12">
+<body class="pt-12 h-screen flex items-center justify-center bg-gray-200">
   <header>
     <div class="flex justify-between items-center bg-blue-500 text-black fixed inset-x-0 top-0 z-50" style="-webkit-app-region: drag">
       <div class="flex items-center">
         <span class="material-symbols-outlined p-2 hover:bg-gray-200 select-none">menu</span>
       </div>
+      <div class="flex text-center text-white">Appointment Scheduler</div>
       <div class="flex items-center">
         <span class="material-symbols-outlined p-2 minimize-button hover:bg-gray-200 select-none" style="-webkit-app-region: no-drag">minimize</span>
         <span class="material-symbols-outlined p-2 maximize-button hover:bg-gray-200 select-none" style="-webkit-app-region: no-drag">fullscreen</span>
@@ -52,7 +53,7 @@
       </button>
     </div>
     
-    <div class="bg-white p-8 rounded shadow-md hidden" id="loginDiv">
+    <div class="bg-white p-8 rounded shadow-md hidden"  id="loginDiv">
       <h1 class="text-2xl font-bold mb-4">Login</h1>
       <form id="loginForm" class="space-y-4 mb-5">
         <!-- Login form content -->
