@@ -7,32 +7,29 @@ function renderCalendar() {
 
     calendarDiv.innerHTML = '';
 
-  
-    const header = document.createElement('div');
-    header.className = 'flex justify-between items-center mb-4';
+    document.addEventListener('DOMContentLoaded', function() {
+      const header = document.getElementById('currentMonth');
+
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    header.innerHTML = `
-      <h2 class="text-2xl">${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}</h2>
-      <div>
-        <button type="button" id="prevMonth" class="bg-blue-500 text-white rounded px-2 py-1 mr-2">Prev</button>
-        <button type="button" id="nextMonth" class="bg-blue-500 text-white rounded px-2 py-1">Next</button>
-      </div> `;
-    
-    calendarDiv.appendChild(header);
+    function updateHeader() {
+      header.innerHTML = `
+          <h2 class="text-2xl">${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}</h2>`;
+  }
+  updateHeader();
+
     document.getElementById('prevMonth').addEventListener('click', function() {
       currentDate.setMonth(currentDate.getMonth() - 1);
+      updateHeader();
       var userId = firebase.auth().currentUser.uid;
       renderCalendar().then(() => colorDateDivs(userId));
-    });
-    document.getElementById('refreshBtn').addEventListener('click', function() {
-      location.reload(true);
     });
     document.getElementById('nextMonth').addEventListener('click', function() {
       currentDate.setMonth(currentDate.getMonth() + 1);
+      updateHeader();
       var userId = firebase.auth().currentUser.uid;
       renderCalendar().then(() => colorDateDivs(userId));
     });
-  
+  });
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
     const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
     const daysInPreviousMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
@@ -46,13 +43,13 @@ function renderCalendar() {
       weekRow.className = 'grid grid-cols-7 gap-4 mt-2';
       for (let j = 0; j < 7; j++) {
         if (i === 0 && j < firstDayOfMonth) {
-          weekRow.innerHTML += `<div class="text-center text-gray-400 rounded-md">${prevMonthDate}</div>`;
+          weekRow.innerHTML += `<div class="text-center text-gray-400 rounded-md p-2">${prevMonthDate}</div>`;
           prevMonthDate++;
         } else if (date > daysInMonth) {
-          weekRow.innerHTML += `<div class="text-center text-gray-400 rounded-md">${nextMonthDate}</div>`;
+          weekRow.innerHTML += `<div class="text-center text-gray-400 rounded-md p-2 ">${nextMonthDate}</div>`;
           nextMonthDate++;
         } else {
-          weekRow.innerHTML += `<div class="text-center hover:bg-blue-200 date rounded-md p-2" data-date="${currentDate.getFullYear()}-${currentDate.getMonth()+1}-${date}">${date}</div>`;
+          weekRow.innerHTML += `<div class="text-center hover:bg-blue-200 date rounded-md p-2 cursor-pointer" data-date="${currentDate.getFullYear()}-${currentDate.getMonth()+1}-${date}">${date}</div>`;
           date++;
         }
       }
@@ -73,6 +70,8 @@ document.getElementById('calendar').addEventListener('click', function(event) {
     console.log(`Selected date: ${selectedYear}-${selectedMonth}-${selectedDate}`);
    
     event.target.classList.add('selected'); 
+
+    
   }
 });
 

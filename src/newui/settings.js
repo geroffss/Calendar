@@ -1,14 +1,4 @@
-
-document.getElementById('settingsBtn').addEventListener('click', function() {
-    document.getElementById('settingsModal').classList.remove('hidden');
-  });
-  
-
-  document.getElementById('preferencesForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    document.getElementById('settingsModal').classList.add('hidden');
-  });
-
+document.addEventListener('DOMContentLoaded', function() {
 
 const startHourSelect = document.getElementById('startHour');
 for (let i = 0; i < 24; i++) {
@@ -36,8 +26,8 @@ firebase.auth().onAuthStateChanged(function (user) {
           startHour: startHour,
           endHour: endHour
         });
-        document.getElementById('settingsModal').classList.add('hidden');
+        document.getElementById('modalText').innerText = 'Preferences saved!';
       });
     }
   });
-
+});

@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       var dateParts = dateDiv.dataset.date.split('-');
       var year = dateParts[0];
-      var month = dateParts[1] - 1; // Subtract 1 to account for zero-based month
+      var month = dateParts[1] - 1; 
 
       var day = dateDiv.textContent;
 
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
-          // User is signed in.
+
           var dateStringForFirebase = selectedDate.toLocaleDateString('en-CA');
           db.ref('appointments/' + user.uid).orderByChild('date').equalTo(dateStringForFirebase).once('value').then(function (snapshot) {
             var appointments = [];
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error fetching appointments:', error);
           });
         } else {
-          // No user is signed in.
+    
           console.log('No user is signed in.');
         }
       });
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
-      // User is signed in.
+
       document.getElementById('appointmentForm').addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       });
     } else {
-      // No user is signed in.
+ 
       console.log('No user is signed in.');
     }
   });

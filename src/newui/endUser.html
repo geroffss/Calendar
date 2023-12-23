@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+    <script src="windowControls.js"></script>
+    <script src="firebaseInit.js"></script>
+    <script src="windowControls.js"></script>
+    <script src="settings.js"></script>
+    <script src="showAppointments.js"></script>
+    <script src="appointmentHours.js"></script>
+</head>
+
+<body class="bg-gray-950 overflow-hidden">
+    <header>
+        <div class="flex justify-between items-center bg-purple-500 text-black fixed inset-x-0 top-0 z-50"
+            style="-webkit-app-region: drag">
+            <div class="flex items-center">
+                <span class="material-symbols-outlined p-2 hover:bg-gray-200 select-none">menu</span>
+            </div>
+            <div class="flex text-center text-white">WeAppoint</div>
+            <div class="flex items-center">
+                <span class="material-symbols-outlined p-2 minimize-button hover:bg-gray-200 select-none"
+                    style="-webkit-app-region: no-drag">minimize</span>
+                <span class="material-symbols-outlined p-2 maximize-button hover:bg-gray-200 select-none"
+                    style="-webkit-app-region: no-drag">fullscreen</span>
+                <span class="material-symbols-outlined p-2 close-button hover:bg-gray-200 select-none"
+                    style="-webkit-app-region: no-drag">close</span>
+            </div>
+        </div>
+    </header>
+    <main class="mt-3 bg-white-100">
+        <div class="flex h-screen bg-gray-200">
+            <div class="w-64 p-2 h-full bg-gray-200 text-center relative">
+                <div class=" p-2 mt-4">
+                    <div class="flex flex-row gap-2 p-2">
+                        <img src="img/logo.svg" alt="">
+                        <h1 class="text-xl text-purple-900 font-bold">WeAppoint</h1>
+                    </div>
+                </div>
+                <hr class="h-px bg-gray-200 border-0 dark:bg-gray-700">
+                <ul class="p-2">
+                    <li class="mb-2">
+                        <a id="dashboardBtn" href="#"
+                            class="flex bg-purple-500 text-gray-700 hover:bg-gray-100 p-2 rounded-lg">
+                            <span class="material-symbols-outlined">dashboard</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a id="upcomingBtn" href="#"
+                            class="flex items-center text-gray-700 hover:bg-gray-100 p-2 rounded-lg">
+                            <span class="material-symbols-outlined">upcoming</span>
+                            <span>Upcomings</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a id="calendarBtn" href="#"
+                            class="flex items-center text-gray-700 hover:bg-gray-100 p-2 rounded-lg">
+                            <span class="material-symbols-outlined">calendar_month</span>
+                            <span>Calendar</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a id="meetingsBtn" href="#"
+                            class="flex items-center text-gray-700 hover:bg-gray-100 p-2 rounded-lg">
+                            <span class="material-symbols-outlined">groups</span>
+                            <span>Meetings</span>
+                        </a>
+                    </li>
+                    <hr class="h-px bg-gray-200 mt-4 border-0 dark:bg-gray-700">
+                    <li class="mb-2">
+                        <a id="settingsBtn" href="#"
+                            class="flex items-center text-gray-700 hover:bg-gray-100 p-2 rounded-lg">
+                            <span class="material-symbols-outlined">settings</span>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="mb-6 absolute bottom-0 text-center">
+                        <span class="block text-center text-sm text-gray-500 sm:text-center dark:text-gray-400">Made
+                            with 💜 for you</span>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="flex-1 mt-7 bg-white shadow-lg">
+                <nav class="bg-gray-200 p-4 ">
+                    <div class="flex flex-row justify-between ">
+                        <div>
+                            <h1 class="text-2xl font-semibold" id="userId"></h1>
+                        </div>
+                        <div class="flex flex-row gap-4  ">
+                            <span class="material-symbols-outlined">notifications</span>
+                            <span class="material-symbols-outlined">account_circle</span>
+                            <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                        </div>
+                    </div>
+                </nav>
+                <div class="bg-white flex items-center justify-center max-h-full">
+                    <div id="dashboardDiv" class="lg:w-full md:w-12/12 sm:w-10/12 mx-auto p-4">
+                        <div class="grid grid-cols-2 gap-4 p-4">
+                            <div class="bg-white shadow-lg rounded-lg p-4 ">
+                                <h2 class="text-2xl font-semibold mb-4">User Info</h2>
+                                <div id="userInfo">
+
+                                </div>
+                                <button class="bg-blue-500 text-white rounded px-4 py-2 mt-8"
+                                    id="userInfoSave">Save</button>
+                            </div>
+
+                            <div class=" flex flex-col bg-white shadow-lg rounded-lg p-4 gap-3">
+                                <h2 class="text-2xl font-semibold mb-4">Appointments</h2>
+                                <p>Today: 5</p>
+                                <p>This Month: 20</p>
+                                <p>This Year: 200</p>
+                            </div>
+
+                            <div class="bg-white shadow-lg rounded-lg p-4">
+                                <h2 class="text-2xl font-semibold mb-4">Recurrent Clients</h2>
+                            </div>
+                            <div class="bg-white shadow-lg rounded-lg p-4">
+                                <h2 class="text-2xl font-semibold mb-4">Notifications</h2>
+                                <p>Notification 1</p>
+                                <p>Notification 2</p>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div id="upcomingDiv" class="lg:w-full md:w-12/12 sm:w-10/12 mx-auto p-4 hidden">
+                        <div class="bg-white shadow-lg rounded-lg p-4">
+                            <h2 class="text-2xl font-semibold mb-4">Upcoming Appointments</h2>
+                            <ul>
+                                <li class="mb-2">
+                                    <p class="font-bold">March 20, 2023</p>
+                                    <p>Event 1 Description</p>
+                                </li>
+                                <li class="mb-2">
+                                    <p class="font-bold">April 15, 2023</p>
+                                    <p>Event 2 Description</p>
+                                </li>
+                                <li class="mb-2">
+                                    <p class="font-bold">May 30, 2023</p>
+                                    <p>Event 3 Description</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="calendarDiv" class="lg:w-full md:w-12/12 sm:w-10/12 mx-auto p-4 hidden relative">
+                        <div class="lg:w-full md:w-12/12 sm:w-10/12 mx-auto p-4">
+                            <div id="fullCalendar" class="bg-white shadow-lg rounded-lg overflow-hidden w-full h-full">
+                                <div class="flex items-center justify-between px-6 py-3 bg-purple-700">
+                                    <button id="prevMonth" class="text-white">Previous</button>
+                                    <div id="currentMonth" class="text-white"></div>
+                                    <button id="nextMonth" class="text-white">Next</button>
+                                </div>
+                                <div id="calendar" class="bg-white w-full overflow-auto rounded-lg shadow-lg p-4">
+                                </div>
+                            </div>
+                            <div class="flex mt-2">
+                                <div class="w-1/2 pr-2">
+                                    <h2 class="text-2xl font-bold mb-2 p-2 text-white bg-purple-700 rounded-md">
+                                        Appointments</h2>
+                                        <div id="modal" class="hidden">
+                                            <div class="bg-white rounded-lg shadow-xl">
+                                                <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4 w-full">
+                                                    <h3 class="text-lg leading-6 font-medium text-gray-900">Appointments</h3>
+                                                    <h4 id="appointmentDate" class="text-md leading-5 font-medium text-gray-600 mt-2">For: </h4>
+                                                    <ul id="appointmentList" class="mt-3 flex flex-wrap overflow-y-auto h-64">
+                                                    </ul>
+                                                </div>
+                                                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                                    <button id="closeModal" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                                        Close
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="w-1/2 pl-2">
+                                    <div id="newAppointmentForm" class="hidden">
+                                        <h2 class="text-2xl font-bold mb-4 p-2 text-white bg-purple-700 rounded-md">New
+                                            Appointment</h2>
+                                        <h3 id="appSelectedHour"></h3>
+                                        <form class="bg-white p-4 rounded shadow-lg">
+                                            <label for="name"
+                                                class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+                                            <input type="text" id="name" name="name"
+                                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                            <label for="email"
+                                                class="block text-gray-700 text-sm font-bold mb-2 mt-4">Email:</label>
+                                            <input type="email" id="email" name="email"
+                                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                            <label for="phone"
+                                                class="block text-gray-700 text-sm font-bold mb-2 mt-4">Phone:</label>
+                                            <input type="tel" id="phone" name="phone"
+                                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                            <input type="submit" value="Submit"
+                                                class="mt-4 bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div id="settingsModal" class="lg:w-full md:w-12/12 sm:w-10/12 mx-auto p-4 hidden">
+                        <div class="bg-white shadow-lg rounded-lg overflow-hidden w-full h-full">
+                            <div class="flex items-center justify-between px-6 py-3">
+                                <h2 class="text-2xl font-bold">User Preferences</h2>
+                            </div>
+                            <div class="bg-white w-full overflow-auto rounded-lg shadow-lg p-4">
+                                <form id="preferencesForm">
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="startHour">
+                                            From:
+                                        </label>
+                                        <select id="startHour"
+                                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                        </select>
+                                    </div>
+                                    <div class="mb-6">
+                                        <label class="block text-gray-700 text-sm font-bold mb-2" for="endHour">
+                                            To:
+                                        </label>
+                                        <select id="endHour"
+                                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <button
+                                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                            type="submit">
+                                            Save
+                                        </button>
+                                        <p id="modalText" class="text-sm text-green-500"></p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+        </div>
+    </main>
+    <script src="addUsername.js"></script>
+    <script src="dashboardItems.js"></script>
+    <script src="calendarGen.js"></script>
+</body>
+
+</html>

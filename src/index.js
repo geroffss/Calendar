@@ -9,7 +9,7 @@ if (require('electron-squirrel-startup')) {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1000,
+    width: 1600,
     height: 1000,
     sandbox: false,
     frame: false,
@@ -21,7 +21,7 @@ const createWindow = () => {
   ipcMain.on('maximize', () => mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize());
   ipcMain.on('close', () => mainWindow.close());
   // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, '/newui/index.html'));
 
   // Open the DevTools.
   //mainWindow.webContents.openDevTools();
